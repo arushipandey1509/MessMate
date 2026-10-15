@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}
+Student registration | MessMate
+{% endblock %}
+{% block content %}
+<section class="auth-layout">
+    <div class="auth-aside">
+        <div class="eyebrow">WELCOME TO MESSMATE</div>
+        <h1>Your meal plan<br>starts here.</h1>
+        <p>Register once to view the weekly menu, reserve your meal and choose a convenient serving slot.</p>
+        <div class="aside-stat">
+            <strong>Less waste starts with one choice.</strong>
+            <span>Make your selection before the meal.</span>
+        </div>
+    </div>
+    <form class="auth-card" method="post">
+        <span class="form-kicker">STUDENT ACCOUNT</span>
+        <h2>Create account</h2>
+        <p class="muted">Use your student details to register.</p>
+        <label>Full name<input name="name" required autocomplete="name" placeholder="e.g. Asha Kumar"></label>
+        <label>Student ID<input name="student_id" required autocomplete="username" placeholder="Your college ID"></label>
+        <label>Email address<input name="email" type="email" required autocomplete="email" placeholder="you@example.com"></label>
+        <label>Password<input name="password" type="password" required minlength="8" autocomplete="new-password" placeholder="At least 8 characters"></label>
+        <button class="button primary full" type="submit">Create account →</button>
+        <p class="form-foot">Already registered? <a href="{{ url_for('login') }}">Log in</a></p>
+    </form>
+</section>
+{% endblock %}
