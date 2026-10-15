@@ -1,0 +1,191 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Student dashboard | MessMate{% endblock %}
+
+{% block content %}
+
+<section class="dashboard-welcome">
+    <div>
+        <div class="eyebrow">
+            STUDENT DASHBOARD · {{ today.strftime('%A, %d %B %Y') }}
+        </div>
+
+        <h1>
+            Hi, {{ session.get('student_name', 'Student') }}
+            <span class="wave">✦</span>
+        </h1>
+
+        <p class="muted">
+            Choose what you'd like to eat and reserve your serving slot.
+        </p>
+    </div>
+
+    <span class="status-pill">
+        <i></i> Student portal
+    </span>
+</section>
+
+<div class="dashboard-columns">
+
+    <section class="panel meal-panel">
+        <div class="panel-heading">
+            <div>
+                <div class="eyebrow">TODAY'S MENU</div>
+                <h2>Make your meal plan</h2>
+            </div>
+
+            <span class="subtle-tag">Selections can be updated</span>
+        </div>
+
+        <p class="muted small">
+            Select one or more items and a slot for each meal.
+            Your choices help the mess estimate demand.
+        </p>
+
+        {% for meal in meals %}
+            <form
+                class="meal-form"
+                data-meal-form
+                data-meal-type="{{ meal }}"
+            >
+                <div class="meal-form-top">
+                    <div>
+                        <span class="meal-icon">
+                            {% if meal == 'breakfast' %}
+                                ☀
+                            {% elif meal == 'lunch' %}
+                                🍲
+                            {% else %}
+                                🌙
+                            {% endif %}
+                        </span>
+
+                        <h3>{{ meal|title }}</h3>
+                    </div>
+
+                    {% if selection_map.get(meal) %}
+                        <span class="saved-pill">✓ Saved</span>
+                    {% endif %}
+                </div>
+
+                {% set items = menu_map.get(meal, []) %}
+
+                {% if items %}
+                    <div class="food-options">
+                        {% for item in items %}
+                            <label class="food-option">
+                                <input
+                                    type="checkbox"
+                                    name="items"
+                                    value="{{ item }}"
+                                    {% if selection_map.get(meal) and item in selection_map.get(meal)['selected_items']|from_json %}
+                                        checked
+                                    {% endif %}
+                                >
+
+                                <span>{{ item }}</span>
+                            </label>
+                        {% endfor %}
+                    </div>
+
+                    <label class="slot-label">
+                        Serving slot
+
+                        <select name="slot" required>
+                            <option value="">Choose a slot</option>
+
+                            {% for slot in slots %}
+                                <option
+                                    value="{{ slot }}"
+                                    {% if selection_map.get(meal) and selection_map.get(meal)['slot'] == slot %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ slot }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </label>
+
+                    <div class="meal-actions">
+                        <button class="button primary" type="submit">
+                            Save selection
+                        </button>
+
+                        {% if selection_map.get(meal) %}
+                            <button
+                                class="button quiet"
+                                type="button"
+                                data-cancel-meal="{{ meal }}"
+                            >
+                                Cancel
+                            </button>
+                        {% endif %}
+                    </div>
+
+                    <p class="form-message" aria-live="polite"></p>
+
+                {% else %}
+                    <div class="empty-inline">
+                        The administrator has not published this meal's menu for today.
+                    </div>
+                {% endif %}
+            </form>
+        {% endfor %}
+    </section>
+
+    <aside class="side-stack">
+
+        <section class="panel">
+            <div class="eyebrow">WEEKLY MENU</div>
+            <h2>Plan your week</h2>
+
+            <div class="weekly-list">
+                {% for day, day_menu in week_menu.items() %}
+                    <details {% if day == today.weekday() %}open{% endif %}>
+                        <summary>
+                            <span>
+                                {{ ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][day] }}
+                            </span>
+
+                            {% if day == today.weekday() %}
+                                <small>Today</small>
+                            {% endif %}
+                        </summary>
+
+                        <div class="weekly-items">
+                            {% for meal in meals %}
+                                <p>
+                                    <b>{{ meal|title }}:</b>
+                                    {{ day_menu[meal] or 'Not published' }}
+                                </p>
+                            {% endfor %}
+                        </div>
+                    </details>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="eyebrow">NOTICE BOARD</div>
+            <h2>Important updates</h2>
+
+            {% if notices %}
+                {% for notice in notices %}
+                    <article class="notice-mini">
+                        <h3>{{ notice.title }}</h3>
+                        <p>{{ notice.body }}</p>
+                        <small>{{ notice.created_at }}</small>
+                    </article>
+                {% endfor %}
+            {% else %}
+                <p class="muted">No notices at the moment.</p>
+            {% endif %}
+        </section>
+
+    </aside>
+
+</div>
+
+{% endblock %}
