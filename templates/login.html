@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}
+Student login | MessMate
+{% endblock %}
+{% block content %}
+<section class="auth-layout">
+  <div class="auth-aside">
+    <div class="eyebrow">YOUR MESS, MADE SMARTER</div>
+    <h1>Welcome<br>back.</h1>
+    <p>Check today's menu, update your meal selection and choose the slot that works for you.</p>
+    <div class="aside-stat">
+      <strong>Choose ahead. Arrive on time.</strong>
+      <span>Meal planning made simple.</span>
+    </div></div>
+  <form class="auth-card" method="post">
+    <span class="form-kicker">STUDENT PORTAL</span>
+    <h2>Log in</h2>
+    <p class="muted">Enter your student ID or email.</p>
+    <label>Student ID or email<input name="identity" required autocomplete="username" placeholder="Student ID or email"></label>
+    <label>Password<input name="password" type="password" required autocomplete="current-password" placeholder="Your password"></label>
+    <button class="button primary full" type="submit">Log in →</button>
+    <p class="form-foot">Forgot your password? Contact the mess administrator to verify your identity and reset it securely.</p>
+    <p class="form-foot">New to MessMate? <a href="{{ url_for('register') }}">Create an account</a></p>
+  </form>
+</section>
+{% endblock %}
