@@ -13,7 +13,6 @@
             Use real student selections to plan food preparation and serving slots.
         </p>
     </div>
-
     <span class="status-pill">
         <i></i> Admin access
     </span>
@@ -21,12 +20,7 @@
 
 <form class="date-filter" method="get">
     <label for="date">Demand date</label>
-    <input
-        id="date"
-        type="date"
-        name="date"
-        value="{{ target_date }}"
-    >
+    <input id="date" type="date" name="date" value="{{ target_date }}">
     <button class="button secondary" type="submit">View demand</button>
     <span class="muted small">Bookings shown for the selected date.</span>
 </form>
@@ -49,9 +43,7 @@
     <article class="stat-card">
         <span class="stat-icon green">◷</span>
         <span class="stat-label">Meals today</span>
-        <strong>
-            {{ meal_counts['breakfast'] + meal_counts['lunch'] + meal_counts['dinner'] }}
-        </strong>
+        <strong>{{ meal_counts['breakfast'] + meal_counts['lunch'] + meal_counts['dinner'] }}</strong>
         <small>Bookings for {{ target_date }}</small>
     </article>
 </section>
@@ -76,12 +68,10 @@
                 <article class="demand-item">
                     <span>{{ item }}</span>
                     <strong>{{ count }}</strong>
-                    <small>
-                        {{ 'student' if count == 1 else 'students' }} selected
-                    </small>
-
+                    <small>{{ 'student' if count == 1 else 'students' }} selected</small>
                     <div class="demand-bar">
-                        <i style="width: {{ (count / (item_counts.values()|max) * 100)|round|int }}%"></i>
+                        {% set max_count = item_counts.values()|max if item_counts else 0 %}
+                        <i style="--bar-width: {{ ((count / max_count * 100)|round|int) if max_count > 0 else 0 }}%;"></i>
                     </div>
                 </article>
             {% endfor %}
@@ -139,7 +129,6 @@
                         <th>Slot</th>
                     </tr>
                 </thead>
-
                 <tbody>
                     {% for row in selections %}
                         <tr>
@@ -149,9 +138,7 @@
                             </td>
                             <td>{{ row.meal_type|title }}</td>
                             <td>{{ row.selected_items|from_json|join(', ') }}</td>
-                            <td>
-                                <span class="slot-chip">{{ row.slot }}</span>
-                            </td>
+                            <td><span class="slot-chip">{{ row.slot }}</span></td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -181,7 +168,6 @@
             {% for day in range(7) %}
                 <details class="menu-day" {% if day == 0 %}open{% endif %}>
                     <summary>{{ weekdays[day] }}</summary>
-
                     <div class="menu-editor-fields">
                         {% for meal in meals %}
                             <label>
@@ -215,11 +201,7 @@
         </div>
     </div>
 
-    <form
-        class="notice-form"
-        method="post"
-        action="{{ url_for('post_notice') }}"
-    >
+    <form class="notice-form" method="post" action="{{ url_for('post_notice') }}">
         <label>
             Notice title
             <input
@@ -254,7 +236,6 @@
                     <p>{{ notice.body }}</p>
                     <small>{{ notice.created_at }}</small>
                 </div>
-
                 <form
                     method="post"
                     action="{{ url_for('delete_notice', notice_id=notice.id) }}"
