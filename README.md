@@ -1,5 +1,7 @@
 # MessMate — Smart Mess Meal Planning Website
 
+🚀 **Live Demo:** [Open MessMate](https://messmate-0as4.onrender.com)
+
 MessMate is a student-friendly website built with **HTML, CSS, JavaScript, Python (Flask), and SQLite**. Students register, sign in, view the weekly menu, choose food items, and reserve a serving slot. The administrator manages the menu and notices and sees demand estimates from actual student selections.
 
 ## Why MessMate is different
