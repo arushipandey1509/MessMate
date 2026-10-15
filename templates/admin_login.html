@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}
+Admin login | MessMate
+{% endblock %}{% block content %}
+<section class="auth-layout admin-auth">
+    <div class="auth-aside">
+        <div class="eyebrow">MESS MANAGEMENT</div>
+        <h1>Plan better.<br>Serve smarter.</h1>
+        <p>Manage the weekly menu, publish notices and use student selections to estimate preparation requirements.</p>
+        <div class="aside-stat">
+            <strong>One admin portal.</strong>
+            <span>Keep menu updates and planning in one place.</span>
+        </div>
+    </div>
+    <form class="auth-card" method="post">
+        <span class="form-kicker">RESTRICTED ACCESS</span>
+        <h2>Administrator login</h2>
+        <p class="muted">Only the configured administrator can access management tools.</p>
+        <label>Username<input name="username" required autocomplete="username"></label>
+        <label>Password<input name="password" type="password" required autocomplete="current-password"></label>
+        <button class="button primary full" type="submit">Open dashboard →</button>
+        <p class="form-foot">Admin credentials are configured on the server, not through student registration.</p>
+    </form>
+</section>{% endblock %}
