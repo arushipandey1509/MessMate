@@ -1,0 +1,274 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Admin dashboard | MessMate{% endblock %}
+
+{% block content %}
+
+<section class="dashboard-welcome">
+    <div>
+        <div class="eyebrow">MESS MANAGEMENT</div>
+        <h1>Admin dashboard</h1>
+        <p class="muted">
+            Use real student selections to plan food preparation and serving slots.
+        </p>
+    </div>
+
+    <span class="status-pill">
+        <i></i> Admin access
+    </span>
+</section>
+
+<form class="date-filter" method="get">
+    <label for="date">Demand date</label>
+    <input
+        id="date"
+        type="date"
+        name="date"
+        value="{{ target_date }}"
+    >
+    <button class="button secondary" type="submit">View demand</button>
+    <span class="muted small">Bookings shown for the selected date.</span>
+</form>
+
+<section class="stat-grid">
+    <article class="stat-card">
+        <span class="stat-icon">♧</span>
+        <span class="stat-label">Registered students</span>
+        <strong>{{ total_students }}</strong>
+        <small>Student accounts</small>
+    </article>
+
+    <article class="stat-card">
+        <span class="stat-icon orange">▤</span>
+        <span class="stat-label">Meal bookings</span>
+        <strong>{{ selections|length }}</strong>
+        <small>Across all meal types</small>
+    </article>
+
+    <article class="stat-card">
+        <span class="stat-icon green">◷</span>
+        <span class="stat-label">Meals today</span>
+        <strong>
+            {{ meal_counts['breakfast'] + meal_counts['lunch'] + meal_counts['dinner'] }}
+        </strong>
+        <small>Bookings for {{ target_date }}</small>
+    </article>
+</section>
+
+<section class="panel demand-panel">
+    <div class="panel-heading">
+        <div>
+            <div class="eyebrow">PREPARATION ESTIMATE</div>
+            <h2>Food requirements</h2>
+        </div>
+        <span class="subtle-tag">Based on saved choices</span>
+    </div>
+
+    <p class="muted small">
+        Each count represents the number of students who selected that item.
+        These are demand estimates, not exact portion weights.
+    </p>
+
+    {% if item_counts %}
+        <div class="demand-grid">
+            {% for item, count in item_counts|dictsort %}
+                <article class="demand-item">
+                    <span>{{ item }}</span>
+                    <strong>{{ count }}</strong>
+                    <small>
+                        {{ 'student' if count == 1 else 'students' }} selected
+                    </small>
+
+                    <div class="demand-bar">
+                        <i style="width: {{ (count / (item_counts.values()|max) * 100)|round|int }}%"></i>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            No meal selections recorded for {{ target_date }} yet.
+        </div>
+    {% endif %}
+</section>
+
+<section class="panel">
+    <div class="panel-heading">
+        <div>
+            <div class="eyebrow">SERVING FLOW</div>
+            <h2>Slot-wise bookings</h2>
+        </div>
+    </div>
+
+    <div class="slot-grid">
+        {% for meal in meals %}
+            <article class="slot-card">
+                <h3>{{ meal|title }}</h3>
+                <strong class="slot-total">{{ meal_counts[meal] }}</strong>
+                <small>meal bookings</small>
+
+                {% for slot in slots %}
+                    <div class="slot-row">
+                        <span>{{ slot }}</span>
+                        <b>{{ slot_counts[meal][slot] }}</b>
+                    </div>
+                {% endfor %}
+            </article>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="panel">
+    <div class="panel-heading">
+        <div>
+            <div class="eyebrow">STUDENT SELECTIONS</div>
+            <h2>Booking details</h2>
+        </div>
+        <span class="subtle-tag">{{ target_date }}</span>
+    </div>
+
+    {% if selections %}
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Meal</th>
+                        <th>Selected items</th>
+                        <th>Slot</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for row in selections %}
+                        <tr>
+                            <td>
+                                <strong>{{ row.name }}</strong>
+                                <small class="table-sub">{{ row.student_code }}</small>
+                            </td>
+                            <td>{{ row.meal_type|title }}</td>
+                            <td>{{ row.selected_items|from_json|join(', ') }}</td>
+                            <td>
+                                <span class="slot-chip">{{ row.slot }}</span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            No bookings to show for this date.
+        </div>
+    {% endif %}
+</section>
+
+<section class="panel" id="weekly-menu">
+    <div class="panel-heading">
+        <div>
+            <div class="eyebrow">MENU MANAGEMENT</div>
+            <h2>Publish the weekly menu</h2>
+            <p class="muted small">
+                Enter comma-separated items for each day and meal.
+                Students see the same menu on their dashboard.
+            </p>
+        </div>
+    </div>
+
+    <form method="post" action="{{ url_for('update_menu') }}">
+        <div class="menu-editor">
+            {% for day in range(7) %}
+                <details class="menu-day" {% if day == 0 %}open{% endif %}>
+                    <summary>{{ weekdays[day] }}</summary>
+
+                    <div class="menu-editor-fields">
+                        {% for meal in meals %}
+                            <label>
+                                {{ meal|title }}
+                                <input
+                                    name="menu_{{ day }}_{{ meal }}"
+                                    value="{{ week_menu[day][meal] }}"
+                                    placeholder="e.g. Rice, Dal, Roti"
+                                >
+                            </label>
+                        {% endfor %}
+                    </div>
+                </details>
+            {% endfor %}
+        </div>
+
+        <button class="button primary" type="submit">
+            Publish weekly menu →
+        </button>
+    </form>
+</section>
+
+<section class="panel" id="notices">
+    <div class="panel-heading">
+        <div>
+            <div class="eyebrow">COMMUNICATION</div>
+            <h2>Post an important notice</h2>
+            <p class="muted small">
+                Notices appear on the home page and student dashboard.
+            </p>
+        </div>
+    </div>
+
+    <form
+        class="notice-form"
+        method="post"
+        action="{{ url_for('post_notice') }}"
+    >
+        <label>
+            Notice title
+            <input
+                name="title"
+                required
+                maxlength="120"
+                placeholder="e.g. Dining hall closed at 2 PM"
+            >
+        </label>
+
+        <label>
+            Message
+            <textarea
+                name="body"
+                required
+                maxlength="1500"
+                rows="3"
+                placeholder="Write the details students need to know..."
+            ></textarea>
+        </label>
+
+        <button class="button primary" type="submit">
+            Publish notice →
+        </button>
+    </form>
+
+    <div class="admin-notices">
+        {% for notice in notices %}
+            <article class="admin-notice">
+                <div>
+                    <h3>{{ notice.title }}</h3>
+                    <p>{{ notice.body }}</p>
+                    <small>{{ notice.created_at }}</small>
+                </div>
+
+                <form
+                    method="post"
+                    action="{{ url_for('delete_notice', notice_id=notice.id) }}"
+                    data-confirm="Delete this notice?"
+                >
+                    <button class="button quiet danger-text" type="submit">
+                        Delete
+                    </button>
+                </form>
+            </article>
+        {% else %}
+            <p class="muted">No notices have been posted.</p>
+        {% endfor %}
+    </div>
+</section>
+
+{% endblock %}
