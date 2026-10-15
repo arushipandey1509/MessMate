@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8fafc"><title>{% block title %}MessMate{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script defer src="{{ url_for('static', filename='script.js') }}"></script>
+</head>
+<body>
+<header class="site-header"><a class="brand" href="{{ url_for('index') }}"><span class="brand-mark">M</span><span>MessMate<small>Eat smart. Waste less.</small></span></a>
+<nav>{% if session.get('role') == 'student' %}<a href="{{ url_for('student_dashboard') }}">Student dashboard</a><form class="inline" method="post" action="{{ url_for('logout') }}"><button class="nav-button" type="submit">Log out</button></form>{% elif session.get('role') == 'admin' %}<a href="{{ url_for('admin_dashboard') }}">Admin dashboard</a><form class="inline" method="post" action="{{ url_for('logout') }}"><button class="nav-button" type="submit">Log out</button></form>{% else %}<a href="{{ url_for('login') }}">Student login</a><a href="{{ url_for('register') }}">Register</a><a class="nav-admin" href="{{ url_for('admin_login') }}">Admin</a>{% endif %}</nav></header>
+<main class="page">{% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}<div class="flash-stack">{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}{% endwith %}{% block content %}{% endblock %}</main>
+<footer class="footer"><span>MessMate · Smart meal planning for a better mess</span><span>Plan ahead · Reduce waste · Skip the queue</span></footer>
+</body></html>
