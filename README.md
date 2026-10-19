@@ -46,8 +46,8 @@ Traditional mess operations often prepare food based on rough estimates and serv
 
    ```powershell
    $env:MESSMATE_SECRET_KEY = "replace-with-a-long-random-secret"
-   $env:MESSMATE_ADMIN_USERNAME = "admin"
-   $env:MESSMATE_ADMIN_PASSWORD = "choose-a-strong-admin-password"
+   $env:MESSMATE_ADMIN_USERNAME = "Arushi"
+   $env:MESSMATE_ADMIN_PASSWORD = "password-not-shown-here"
    $env:MESSMATE_DEBUG = "1"
    ```
 
