@@ -15,8 +15,8 @@ app.config["SECRET_KEY"] = os.environ.get("MESSMATE_SECRET_KEY", "dev-only-chang
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 app.config["SESSION_COOKIE_SECURE"] = os.environ.get("MESSMATE_HTTPS", "0") == "1"
-ADMIN_USERNAME = os.environ.get("MESSMATE_ADMIN_USERNAME", "admin")
-ADMIN_PASSWORD = os.environ.get("MESSMATE_ADMIN_PASSWORD", "ChangeMe123!")
+ADMIN_USERNAME = os.environ.get("MESSMATE_ADMIN_USERNAME", "Arushi")
+ADMIN_PASSWORD = os.environ.get("MESSMATE_ADMIN_PASSWORD", "Pandey@123")
 MEALS = ("breakfast", "lunch", "dinner")
 SLOTS = ("12:00–12:30", "12:30–1:00", "1:00–1:30")
 
